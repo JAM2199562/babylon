@@ -8,7 +8,7 @@ on:
 
 jobs:
   build-and-release:
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-latest
 
     steps:
       - name: Checkout code
@@ -36,7 +36,7 @@ jobs:
       - name: Package the build
         run: |
           cd $HOME/go/bin
-          tar -czvf babylon-v0.7.2.tar.gz babylon
+          tar -czvf babylon-v0.7.2.tar.gz babylond chain cometbft cosmovisor go gofmt node
           mv babylon-v0.7.2.tar.gz $GITHUB_WORKSPACE
 
       - name: Create Release
