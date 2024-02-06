@@ -4,6 +4,8 @@ on:
   push:
     branches:
       - main
+  workflow_dispatch: # 这允许手动触发workflow
+
 
 jobs:
   build:
