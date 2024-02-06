@@ -1,24 +1,23 @@
-name: Build and Package
+name: Build, Package, and Release
 
 on:
   push:
     branches:
       - main
-  workflow_dispatch: # 这允许手动触发workflow
-
+  workflow_dispatch:
 
 jobs:
-  build:
+  build-and-release:
     runs-on: ubuntu-20.04
 
     steps:
       - name: Checkout code
         uses: actions/checkout@v2
-
-      - name: Set up Go 1.21.5
+      
+      - name: Set up Go
         uses: actions/setup-go@v2
         with:
-          go-version: 1.21.5
+          go-version: '1.21.5'
 
       - name: Install dependencies
         run: |
@@ -27,31 +26,36 @@ jobs:
 
       - name: Clone and build the project
         run: |
-          # Set up environment variables
-          export GOROOT=/usr/local/go
-          export GOPATH=$HOME/go
-          export GO111MODULE=on
-          export PATH=$PATH:/usr/local/go/bin:$HOME/go/bin
-
-          # Configure work directory
           mkdir -p $HOME/go
           cd $HOME/go
-
-          # Clone source code, switch to specific version, and compile
           git clone https://github.com/babylonchain/babylon.git
           cd babylon
           git checkout v0.7.2
           make install
-
+          
       - name: Package the build
         run: |
-          # Assuming the build process generates a binary or output in the $HOME/go/bin directory
           cd $HOME/go/bin
           tar -czvf babylon-v0.7.2.tar.gz babylon
           mv babylon-v0.7.2.tar.gz $GITHUB_WORKSPACE
 
-      - name: Upload artifact
-        uses: actions/upload-artifact@v2
+      - name: Create Release
+        id: create_release
+        uses: actions/create-release@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
-          name: babylon-v0.7.2
-          path: babylon-v0.7.2.tar.gz
+          tag_name: $(date +'%Y%m%d%H%M%S')
+          release_name: Release $(date +'%Y-%m-%d %H:%M:%S')
+          draft: false
+          prerelease: false
+
+      - name: Upload Release Asset
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          upload_url: ${{ steps.create_release.outputs.upload_url }}
+          asset_path: ./babylon-v0.7.2.tar.gz
+          asset_name: babylon-v0.7.2.tar.gz
+          asset_content_type: application/gzip
