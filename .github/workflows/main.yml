@@ -6,6 +6,9 @@ on:
       - main
   workflow_dispatch:
 
+env:
+  BABYLON_VERSION: "0.7.2" # 定义版本号变量
+
 jobs:
   build-and-release:
     runs-on: ubuntu-latest
@@ -30,15 +33,15 @@ jobs:
           cd $HOME/go
           git clone https://github.com/babylonchain/babylon.git
           cd babylon
-          git checkout v0.7.2
+          git checkout v${{ env.BABYLON_VERSION }}
           make install
           
       - name: Package the build
         run: |
           cd $HOME/go/bin
           ls -al
-          tar -czvf babylon-v0.7.2.tar.gz babylond chain node 
-          mv babylon-v0.7.2.tar.gz $GITHUB_WORKSPACE
+          tar -czvf babylon-v${{ env.BABYLON_VERSION }}.tar.gz babylond chain node 
+          mv babylon-v${{ env.BABYLON_VERSION }}.tar.gz $GITHUB_WORKSPACE
 
       - name: Create Release
         id: create_release
@@ -57,6 +60,6 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           upload_url: ${{ steps.create_release.outputs.upload_url }}
-          asset_path: ./babylon-v0.7.2.tar.gz
-          asset_name: babylon-v0.7.2.tar.gz
+          asset_path: ./babylon-v${{ env.BABYLON_VERSION }}.tar.gz
+          asset_name: babylon-v${{ env.BABYLON_VERSION }}.tar.gz
           asset_content_type: application/gzip
