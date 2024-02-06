@@ -36,7 +36,8 @@ jobs:
       - name: Package the build
         run: |
           cd $HOME/go/bin
-          tar -czvf babylon-v0.7.2.tar.gz babylond chain cometbft cosmovisor go gofmt node
+          ls -al
+          tar -czvf babylon-v0.7.2.tar.gz babylond chain node 
           mv babylon-v0.7.2.tar.gz $GITHUB_WORKSPACE
 
       - name: Create Release
