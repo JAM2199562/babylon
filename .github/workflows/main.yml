@@ -35,12 +35,15 @@ jobs:
           cd babylon
           git checkout v${{ env.BABYLON_VERSION }}
           make install
-          
+
+      - name: Copy libwasmvm.x86_64.so to bin directory
+        run: |
+          cp /root/go/pkg/mod/github.com/\!cosm\!wasm/wasmvm@v1.2.3/internal/api/libwasmvm.x86_64.so $HOME/go/bin/
+      
       - name: Package the build
         run: |
           cd $HOME/go/bin
-          ls -al
-          tar -czvf babylon-v${{ env.BABYLON_VERSION }}.tar.gz babylond chain node 
+          tar -czvf babylon-v${{ env.BABYLON_VERSION }}.tar.gz babylond chain node libwasmvm.x86_64.so
           mv babylon-v${{ env.BABYLON_VERSION }}.tar.gz $GITHUB_WORKSPACE
 
       - name: Create Release
