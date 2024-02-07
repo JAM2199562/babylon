@@ -38,7 +38,7 @@ jobs:
 
       - name: Copy libwasmvm.x86_64.so to bin directory
         run: |
-          cp /root/go/pkg/mod/github.com/\!cosm\!wasm/wasmvm@v1.2.3/internal/api/libwasmvm.x86_64.so $HOME/go/bin/
+          cp $home/go/pkg/mod/github.com/\!cosm\!wasm/wasmvm@v1.2.3/internal/api/libwasmvm.x86_64.so $HOME/go/bin/
       
       - name: Package the build
         run: |
